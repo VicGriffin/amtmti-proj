@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------
+// Core tables required for migration (as per inventory)
+// ---------------------------------------------------
+
+model Profile {
+  id          String   @id @default(uuid()) @map("id")
+  fullName    String?  @map("full_name")
+  email       String?
+  phone       String?
+  country     String?
+  profession  String?
+  role        String   @default("student") @map("role")
+  status      String   @default("active") @map("status")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("profiles")
+}
+
+model ProgramCategory {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  title       String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("program_categories")
+}
+
+model Program {
+  id            String   @id @default(uuid())
+  slug          String   @unique
+  title         String
+  category      String
+  categoryLabel String   @map("category_label")
+  level         String
+  mode          String
+  duration      String?
+  feesKsh       Int      @default(0) @map("fees_ksh")
+  summary       String?
+  outcomes      String[] @default([])
+  featured      Boolean  @default(false)
+  status        String   @default("published")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@index([status], name: "idx_programs_status")
+  @@map("programs")
+}
+
+model EnrollmentApplication {
+  id                   String   @id @default(uuid())
+  firstName            String   @map("first_name")
+  lastName             String   @map("last_name")
+  email                String
+  phone                String?
+  country              String?
+  region               String?
+  dateOfBirth          String?  @map("date_of_birth")
+  gender               String?
+  intake               String?
+  courseType           String? @map("course_type")
+  courseId             String? @map("course_id")
+  courseName           String? @map("course_name")
+  programCategory      String? @map("program_category")
+  programDuration      String? @map("program_duration")
+  programStudyMode     String? @map("program_study_mode")
+  programFee           Int?    @map("program_fee")
+  highestEducation     String? @map("highest_education")
+  currentProfession    String? @map("current_profession")
+  employer             String?
+  yearsOfExperience    String? @map("years_of_experience")
+  interestReason       String? @map("interest_reason")
+  preferredLearningMode String? @map("preferred_learning_mode")
+  applicationStatus    String   @default("Pending Review") @map("application_status")
+  paymentStatus        String   @default("Pending") @map("payment_status")
+  source               String   @default("web_form")
+  emailStatus          String   @default("pending") @map("email_status")
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  @@map("enrollment_applications")
+}
+
+model MembershipApplication {
+  id           String   @id @default(uuid())
+  userId       String?  @map("user_id")
+  name         String
+  email        String
+  organization String?
+  country      String?
+  profession   String?
+  tier         String
+  reason       String?
+  emailStatus  String   @default("pending") @map("email_status")
+  status       String   @default("pending")
+  notes        String?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("membership_applications")
+}
+
+model ContactMessage {
+  id          String   @id @default(uuid())
+  name        String
+  email       String
+  phone       String?
+  subject     String?
+  inquiryType String? @map("inquiry_type")
+  source      String   @default("web_form")
+  message     String
+  emailStatus String   @default("pending") @map("email_status")
+  status      String   @default("new")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("contact_messages")
+}
+
+model NewsletterSubscriber {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  status      String   @default("Active")
+  emailStatus String   @default("pending") @map("email_status")
+  source      String   @default("web_form")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("newsletter_subscribers")
+}
