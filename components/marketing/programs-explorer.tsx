@@ -27,8 +27,8 @@ export function ProgramsExplorer({
         const q = query.toLowerCase()
         return (
           p.title.toLowerCase().includes(q) ||
-          p.summary.toLowerCase().includes(q) ||
-          p.category_label.toLowerCase().includes(q)
+          (p.summary?.toLowerCase().includes(q) ?? false) ||
+          (p.category_label?.toLowerCase().includes(q) ?? false)
         )
       }
       return true

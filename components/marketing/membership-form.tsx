@@ -51,7 +51,7 @@ export function MembershipForm() {
     reasonForJoining: '',
   })
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | null) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
@@ -173,7 +173,7 @@ export function MembershipForm() {
 
       <div>
         <Label htmlFor="membershipTier">Membership Tier *</Label>
-        <Select value={formData.membershipTier} onValueChange={(value) => handleChange('membershipTier', value)}>
+        <Select value={formData.membershipTier || 'Student'} onValueChange={(value) => handleChange('membershipTier', value)}>
           <SelectTrigger id="membershipTier" className="mt-1.5">
             <SelectValue />
           </SelectTrigger>

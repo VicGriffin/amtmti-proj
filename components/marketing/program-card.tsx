@@ -6,7 +6,7 @@ import { formatUsd } from '@/lib/formatters'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
-const levelColor: Record<Program['level'], string> = {
+const levelColor: Record<'Certificate' | 'Diploma' | 'Postgraduate Diploma' | 'CPD Course', string> = {
   Certificate: 'bg-secondary/12 text-secondary',
   Diploma: 'bg-primary/10 text-primary',
   'Postgraduate Diploma': 'bg-gold/20 text-gold-foreground',
@@ -40,9 +40,11 @@ export function ProgramCard({ program }: { program: Program }) {
             </div>
           </>
         )}
-        <span className="absolute left-3 top-3 z-10">
-          <Badge className={levelColor[program.level]}>{program.level}</Badge>
-        </span>
+        {program.level && (
+          <span className="absolute left-3 top-3 z-10">
+            <Badge className={levelColor[program.level]}>{program.level}</Badge>
+          </span>
+        )}
       </div>
       <div className="flex flex-1 flex-col p-5">
         <p className="text-xs font-medium uppercase tracking-wide text-secondary">
@@ -66,12 +68,12 @@ export function ProgramCard({ program }: { program: Program }) {
           <span className="font-heading text-base font-bold text-primary">
             {formatUsd(program.fees_ksh ?? 0)}
           </span>
-          <Button size="sm" variant="ghost" className="text-primary hover:text-primary" render={
-            <Link href={`/programs/${program.slug}`}>
+          <Link href={`/programs/${program.slug}`}>
+            <Button size="sm" variant="ghost" className="text-primary hover:text-primary gap-1">
               View
               <ArrowRight className="size-4" />
-            </Link>
-          } />
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

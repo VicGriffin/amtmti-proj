@@ -11,11 +11,20 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    domains: [
-      'localhost',
-      'localhost:3000',
-      process.env.NEXT_PUBLIC_SUPABASE_URL?.replace('https://', ''),
-    ].filter(Boolean),
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.supabaseusercontent.com',
+      },
+    ],
   },
 
   // Headers for security and performance
@@ -85,9 +94,6 @@ const nextConfig = {
   
   // Production optimizations
   productionBrowserSourceMaps: false,
-  
-  // Swcminify - faster builds
-  swcMinify: true,
 }
 
 module.exports = nextConfig
