@@ -1,17 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { verifyAdminToken } from '@/lib/admin-token'
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const token = req.cookies.get('amtmti_admin')?.value
-    if (!token || !(await verifyAdminToken(token))) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 },
-      )
-    }
-
     const supabase = createAdminClient()
 
     const { data, error } = await supabase
