@@ -9,54 +9,89 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { Check, X, Loader2 } from 'lucide-react'
 import { toast } from "sonner"
 
-interface MembershipApplication {
+interface Membership {
   id: string
-  name: string
-  email: string
-  organization: string | null
-  country: string | null
-  profession: string | null
-  reason: string | null
+  user_id: string | null
+  program_id: string
+  status: 'pending' | 'approved' | 'rejected' | 'suspended' | 'cancelled'
   tier: string
+  approval_notes: string | null
+  rejection_reason: string | null
+  approved_at: string | null
   created_at: string
-  status: 'pending' | 'approved' | 'rejected'
+  programs?: {
+    id: string
+    title: string
+    slug: string
+  }
 }
 
 export default function MembershipsAdminPage() {
-  const [applications, setApplications] = useState<MembershipApplication[]>([])
+  const [memberships, setMemberships] = useState<Membership[]>([])
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [statusFilter, setStatusFilter] = useState<string>('pending')
+  const [notes, setNotes] = useState<Record<string, string>>({})
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
-  const fetchApplications = async () => {
+  const fetchMemberships = async (status?: string) => {
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/membership/list')
+      const query = status ? `?status=${status}` : '?status=pending'
+      const res = await fetch(`/api/admin/membership/list${query}`)
       if (!res.ok) throw new Error('Failed to load')
       const data = await res.json()
-        console.log('Fetched membership applications:', data)
-        console.log('Applications length:', data.length)
-      setApplications(data)
+      setMemberships(data.data || [])
     } catch (e) {
-      toast.error('Could not load membership applications')
+      toast.error('Could not load memberships')
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchApplications()
-  }, [])
+    fetchMemberships(statusFilter)
+  }, [statusFilter])
 
-  const handleAction = async (id: string, type: 'approve' | 'reject') => {
+  const handleApprove = async (id: string) => {
     setActionLoading(id)
     try {
-      const res = await fetch(`/api/admin/membership/${id}/${type}`, { method: 'POST' })
+      const res = await fetch(`/api/admin/membership/${id}/approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          notes: notes[id] || '',
+          adminId: 'admin-user-id', // Will be set by backend
+        }),
+      })
       if (!res.ok) throw new Error('Action failed')
-      toast.success(`Application ${type}d`)
-      // Refresh list
-      await fetchApplications()
+      toast.success('Membership approved')
+      await fetchMemberships(statusFilter)
+      setExpandedId(null)
     } catch (e) {
-      toast.error(`Failed to ${type} application`)
+      toast.error('Failed to approve membership')
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleReject = async (id: string) => {
+    setActionLoading(id)
+    try {
+      const res = await fetch(`/api/admin/membership/${id}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reason: notes[id] || '',
+          adminId: 'admin-user-id',
+        }),
+      })
+      if (!res.ok) throw new Error('Action failed')
+      toast.success('Membership rejected')
+      await fetchMemberships(statusFilter)
+      setExpandedId(null)
+    } catch (e) {
+      toast.error('Failed to reject membership')
     } finally {
       setActionLoading(null)
     }
@@ -72,83 +107,121 @@ export default function MembershipsAdminPage() {
 
   return (
     <div className="max-w-7xl mx-auto p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold mb-6">Membership Applications</h1>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold">Membership Management</h1>
+          <p className="text-muted-foreground mt-1">Review and approve student memberships</p>
+        </div>
         <Link href="/admin"><Button variant="outline">Back</Button></Link>
       </div>
 
-      {applications.length === 0 ? (
-        <Card className="p-6 text-center">No membership applications found.</Card>
+      <div className="mb-6 flex gap-2">
+        {['pending', 'approved', 'rejected'].map(status => (
+          <Button
+            key={status}
+            variant={statusFilter === status ? 'default' : 'outline'}
+            onClick={() => setStatusFilter(status)}
+            className="capitalize"
+          >
+            {status}
+          </Button>
+        ))}
+      </div>
+
+      {memberships.length === 0 ? (
+        <Card className="p-6 text-center">
+          No {statusFilter} memberships found.
+        </Card>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Organization</TableHead>
-              <TableHead>Country</TableHead>
-              <TableHead>Profession</TableHead>
-              <TableHead>Membership Tier</TableHead>
-              <TableHead>Reason</TableHead>
-              <TableHead>Date Submitted</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {applications.map((app) => (
-              <TableRow key={app.id}>
-                <TableCell>{app.name}</TableCell>
-                <TableCell>{app.email}</TableCell>
-                <TableCell>{app.organization ?? '-'}</TableCell>
-                <TableCell>{app.country ?? '-'}</TableCell>
-                <TableCell>{app.profession ?? '-'}</TableCell>
-                <TableCell>{app.tier}</TableCell>
-                <TableCell>{app.reason ?? '-'}</TableCell>
-                <TableCell>{new Date(app.created_at).toLocaleDateString()}</TableCell>
-                <TableCell className="capitalize"><Badge className={
-        app.status === 'pending'
-          ? 'bg-yellow-100 text-yellow-800'
-          : app.status === 'approved'
-          ? 'bg-green-100 text-green-800'
-          : 'bg-red-100 text-red-800'
-      }>{app.status}</Badge></TableCell>
-                <TableCell className="text-right space-x-2">
-                  {app.status === 'pending' && (
-                    <>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={actionLoading === app.id}
-                        onClick={() => handleAction(app.id, 'approve')}
-                      >
-                        {actionLoading === app.id ? (
-                          <Loader2 className="animate-spin h-4 w-4 mr-1" />
-                        ) : (
-                          <Check className="h-4 w-4 mr-1" />
-                        )}
-                        Approve
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        disabled={actionLoading === app.id}
-                        onClick={() => handleAction(app.id, 'reject')}
-                      >
-                        {actionLoading === app.id ? (
-                          <Loader2 className="animate-spin h-4 w-4 mr-1" />
-                        ) : (
-                          <X className="h-4 w-4 mr-1" />
-                        )}
-                        Reject
-                      </Button>
-                    </>
+        <div className="space-y-4">
+          {memberships.map((m) => (
+            <Card
+              key={m.id}
+              className="p-4 cursor-pointer hover:bg-accent/50 transition"
+              onClick={() => setExpandedId(expandedId === m.id ? null : m.id)}
+            >
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <h3 className="font-semibold">{m.programs?.title || 'Program'}</h3>
+                  <p className="text-sm text-muted-foreground">{m.user_id}</p>
+                  <div className="flex gap-2 mt-2">
+                    <Badge variant="outline">{m.tier}</Badge>
+                    <Badge className={
+                      m.status === 'pending'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : m.status === 'approved'
+                        ? 'bg-green-100 text-green-800'
+                        : m.status === 'rejected'
+                        ? 'bg-red-100 text-red-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }>
+                      {m.status}
+                    </Badge>
+                  </div>
+                </div>
+                <span className="text-sm text-muted-foreground">
+                  {new Date(m.created_at).toLocaleDateString()}
+                </span>
+              </div>
+
+              {expandedId === m.id && (
+                <div className="mt-4 pt-4 border-t space-y-4">
+                  {m.approval_notes && (
+                    <div>
+                      <h4 className="text-sm font-medium">Approval Notes</h4>
+                      <p className="text-sm text-muted-foreground">{m.approval_notes}</p>
+                    </div>
                   )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                  {m.rejection_reason && (
+                    <div>
+                      <h4 className="text-sm font-medium">Rejection Reason</h4>
+                      <p className="text-sm text-muted-foreground">{m.rejection_reason}</p>
+                    </div>
+                  )}
+
+                  {m.status === 'pending' && (
+                    <div className="space-y-3">
+                      <textarea
+                        placeholder="Add approval or rejection notes..."
+                        value={notes[m.id] || ''}
+                        onChange={(e) => setNotes({ ...notes, [m.id]: e.target.value })}
+                        className="w-full p-2 border rounded text-sm"
+                        rows={3}
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleApprove(m.id)}
+                          disabled={actionLoading === m.id}
+                          className="gap-2"
+                        >
+                          {actionLoading === m.id ? (
+                            <Loader2 className="animate-spin h-4 w-4" />
+                          ) : (
+                            <Check className="h-4 w-4" />
+                          )}
+                          Approve
+                        </Button>
+                        <Button
+                          onClick={() => handleReject(m.id)}
+                          variant="destructive"
+                          disabled={actionLoading === m.id}
+                          className="gap-2"
+                        >
+                          {actionLoading === m.id ? (
+                            <Loader2 className="animate-spin h-4 w-4" />
+                          ) : (
+                            <X className="h-4 w-4" />
+                          )}
+                          Reject
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </Card>
+          ))}
+        </div>
       )}
     </div>
   )
