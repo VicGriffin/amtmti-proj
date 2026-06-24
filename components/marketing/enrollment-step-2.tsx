@@ -52,7 +52,7 @@ const REGIONS: Record<string, string[]> = {
 const GENDERS = ['Male', 'Female', 'Prefer Not To Say']
 
 export function EnrollmentStep2({ data, onDataChange }: EnrollmentStep2Props) {
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | null) => {
     onDataChange({
       ...data,
       [field]: value,

@@ -301,7 +301,7 @@ export default function EnrollmentDetailPage() {
               <label className="text-sm font-medium text-muted-foreground">Application Status</label>
               <Select
                 value={enrollment.application_status}
-                onValueChange={(value) => updateStatus('application_status', value)}
+                onValueChange={(value) => updateStatus('application_status', value ?? '')}
                 disabled={updating}
               >
                 <SelectTrigger className="mt-1.5">
@@ -319,7 +319,7 @@ export default function EnrollmentDetailPage() {
               <label className="text-sm font-medium text-muted-foreground">Payment Status</label>
               <Select
                 value={enrollment.payment_status}
-                onValueChange={(value) => updateStatus('payment_status', value)}
+                onValueChange={(value) => updateStatus('payment_status', value ?? '')}
                 disabled={updating}
               >
                 <SelectTrigger className="mt-1.5">

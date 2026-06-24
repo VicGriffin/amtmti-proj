@@ -18,10 +18,10 @@ interface EnrollmentStep4Props {
 }
 
 export function EnrollmentStep4({ data, onDataChange }: EnrollmentStep4Props) {
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | null) => {
     onDataChange({
       ...data,
-      [field]: value,
+      [field]: value ?? '',
     })
   }
 

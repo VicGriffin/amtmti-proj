@@ -28,7 +28,7 @@ export function ContactForm() {
     message: '',
   })
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | null) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
@@ -134,7 +134,7 @@ export function ContactForm() {
         </div>
         <div>
           <Label htmlFor="inquiryType">Inquiry Type *</Label>
-          <Select value={formData.inquiryType} onValueChange={(value) => handleChange('inquiryType', value)}>
+          <Select value={formData.inquiryType} onValueChange={(value) => handleChange('inquiryType', value ?? '')}>
             <SelectTrigger id="inquiryType" className="mt-1.5">
               <SelectValue />
             </SelectTrigger>

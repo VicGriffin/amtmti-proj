@@ -11,7 +11,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import { getAllProgramSlugs, getProgramBySlug, getPrograms } from '@/lib/programs-db'
-import { formatUsd } from '@/lib/programs-data'
+import { formatUsd } from '@/lib/formatters'
 import { PageHero } from '@/components/site/page-hero'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -60,7 +60,7 @@ export default async function ProgramDetailPage({
   return (
     <>
       <PageHero
-        eyebrow={program.categoryLabel}
+        eyebrow={program.category_label}
         title={program.title}
         description={program.summary}
         breadcrumbs={[
@@ -74,7 +74,7 @@ export default async function ProgramDetailPage({
             {program.level}
           </Badge>
           <span className="font-heading text-2xl font-bold text-gold">
-            {formatUsd(program.feesKsh)}
+            {formatUsd(program.fees_ksh ?? 0)}
           </span>
         </div>
       </PageHero>
@@ -94,7 +94,7 @@ export default async function ProgramDetailPage({
               What you&apos;ll be able to do
             </h3>
             <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-              {program.outcomes.map((outcome) => (
+              {(program.outcomes ?? []).map((outcome) => (
                 <li
                   key={outcome}
                   className="flex items-start gap-3 rounded-none border border-border bg-card p-4"
@@ -111,7 +111,7 @@ export default async function ProgramDetailPage({
               How you&apos;ll learn
             </h3>
             <div className="mt-4 grid gap-4 sm:grid-cols-3">
-              {(program.learningMethods || [
+              {(program.learning_methods || [
                 'Guided modules with readings, case studies, and assessments.',
                 'Live sessions and interactive clinics with faculty and peers across Africa.',
                 'Applied practice tasks that translate learning into patient impact.',
@@ -140,7 +140,7 @@ export default async function ProgramDetailPage({
                     Tuition
                   </p>
                   <p className="font-heading text-xl font-bold text-primary">
-                    {formatUsd(program.feesKsh)}
+                    {formatUsd(program.fees_ksh ?? 0)}
                   </p>
                 </div>
               </div>

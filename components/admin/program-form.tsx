@@ -1,18 +1,19 @@
 "use client";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Program } from '@/lib/programs-data';
 
-type Program = {
+type ProgramFormData = {
   id?: string;
   slug: string;
   title: string;
   category_id?: string;
-  category: string;
-  category_label: string;
-  level: string;
-  mode: string;
+  category?: string;
+  category_label?: string;
+  level?: string;
+  mode?: string;
   duration?: string;
-  fees_ksh: number;
+  fees_ksh?: number;
   summary?: string;
   outcomes?: string[];
   featured?: boolean;
@@ -31,11 +32,11 @@ export default function ProgramForm({
 }) {
   const [slug, setSlug] = useState(initial?.slug || '');
   const [title, setTitle] = useState(initial?.title || '');
-  const [categoryId, setCategoryId] = useState(initial?.category_id || '');
+  const [categoryId, setCategoryId] = useState('');
   const [category, setCategory] = useState(initial?.category || '');
   const [categoryLabel, setCategoryLabel] = useState(initial?.category_label || '');
-  const [level, setLevel] = useState(initial?.level || 'Certificate');
-  const [mode, setMode] = useState(initial?.mode || 'Online');
+  const [level, setLevel] = useState<string>(initial?.level || 'Certificate');
+  const [mode, setMode] = useState<string>(initial?.mode || 'Online');
   const [duration, setDuration] = useState(initial?.duration || '');
   const [fees, setFees] = useState(initial?.fees_ksh?.toString() || '0');
   const [summary, setSummary] = useState(initial?.summary || '');

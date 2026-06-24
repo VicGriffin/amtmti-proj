@@ -12,6 +12,7 @@ import {
 } from '@/lib/validations/enrollment'
 
 interface Course {
+  slug?: string
   id: string
   name: string
   course_type: string
@@ -23,7 +24,7 @@ interface Course {
 
 const STORAGE_KEY = 'amtmti-enrollment-form'
 
-const initialFormData: FullEnrollment = {
+export const initialFormData: FullEnrollment = {
   firstName: '',
   lastName: '',
   email: '',

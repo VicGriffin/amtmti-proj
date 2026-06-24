@@ -58,7 +58,7 @@ export function EnrollmentModal({ open, onOpenChange, initialProgram }: Enrollme
     if (open && initialProgram) {
       setFormData((prev) => ({
         ...prev,
-        courseType: initialProgram.level,
+        courseType: initialProgram.level ?? prev.courseType,
         courseId: initialProgram.slug || '',
         courseName: initialProgram.title || prev.courseName,
       }))

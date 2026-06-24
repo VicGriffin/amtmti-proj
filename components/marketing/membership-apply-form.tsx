@@ -17,7 +17,7 @@ import { toast } from 'sonner'
 
 export function MembershipApplyForm() {
   const [loading, setLoading] = useState(false)
-  const [tier, setTier] = useState(MEMBERSHIP_TIERS[1].name)
+  const [tier, setTier] = useState<string | null>(MEMBERSHIP_TIERS[1].name)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -79,7 +79,7 @@ export function MembershipApplyForm() {
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="ma-tier">Membership tier</Label>
-        <Select value={tier} onValueChange={setTier}>
+        <Select value={tier} onValueChange={(value) => setTier(value)}>
           <SelectTrigger id="ma-tier">
             <SelectValue placeholder="Select a tier" />
           </SelectTrigger>

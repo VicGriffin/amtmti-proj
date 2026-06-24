@@ -28,7 +28,7 @@ export function ProgramsExplorer({
         return (
           p.title.toLowerCase().includes(q) ||
           p.summary.toLowerCase().includes(q) ||
-          p.categoryLabel.toLowerCase().includes(q)
+          p.category_label.toLowerCase().includes(q)
         )
       }
       return true

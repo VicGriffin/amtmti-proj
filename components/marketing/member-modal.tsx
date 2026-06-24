@@ -20,7 +20,7 @@ export function MemberModal({ member, onClose }: Props) {
     .join('')
     .toUpperCase()
 
-  const memberSince = format(new Date(member.created_at), 'PPP')
+  const memberSince = formatDate(new Date(member.created_at), { dateStyle: 'long' })
 
   return (
     <Dialog open={true} onOpenChange={(open) => !open && onClose()}>

@@ -1,19 +1,21 @@
 export { formatUsd } from '@/lib/formatters'
 
 export type Program = {
+  id?: string;
   slug: string
   title: string
   category: string // profession slug
-  categoryLabel: string
-  level: 'Certificate' | 'Diploma' | 'Postgraduate Diploma' | 'CPD Course'
+  category_label?: string
+  level?: 'Certificate' | 'Diploma' | 'Postgraduate Diploma' | 'CPD Course'
   programme?: string
-  mode: 'Online' | 'Hybrid' | 'In-Person'
-  duration: string
-  feesKsh: number
-  summary: string
-  outcomes: string[]
+  mode?: 'Online' | 'Hybrid' | 'In-Person'
+  duration?: string
+  fees_ksh?: number
+  summary?: string
+  outcomes?: string[]
   intake?: string
-  learningMethods?: string[]
+  learning_methods?: string[]
   featured?: boolean
+  status?: string
   image?: string
 }

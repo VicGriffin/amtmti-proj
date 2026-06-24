@@ -23,11 +23,11 @@ export function MemberStatistics() {
         const members = json.members as Array<{ country?: string; organization?: string }>;
         const countries = new Set<string>();
         const orgs = new Set<string>();
-        members.forEach((m) => {
+        (members ?? []).forEach((m) => {
           if (m.country) countries.add(m.country);
           if (m.organization) orgs.add(m.organization);
         });
-        setStats({ total: members.length, countries: countries.size, orgs: orgs.size });
+        setStats({ total: (members ?? []).length, countries: countries.size, orgs: orgs.size });
       } catch (e) {
         console.error('Failed to load member stats', e);
       } finally {

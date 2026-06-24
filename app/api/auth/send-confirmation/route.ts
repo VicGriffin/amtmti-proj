@@ -20,6 +20,7 @@ export async function POST(req: Request) {
       await supabase.auth.admin.generateLink({
         type: 'signup',
         email,
+        password: ''
       })
 
     if (error) {

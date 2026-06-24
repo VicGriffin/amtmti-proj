@@ -173,7 +173,7 @@ export default function AdminEnrollmentsPage() {
         {/* Filters */}
         <div className="mb-6 flex gap-4">
           <div className="w-48">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value ?? '')}>
               <SelectTrigger>
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>

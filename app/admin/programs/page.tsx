@@ -4,14 +4,7 @@ import { useRouter } from 'next/navigation';
 import ProgramForm from '@/components/admin/program-form';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-
-interface Program {
-  id: string;
-  slug: string;
-  title: string;
-  category_label?: string;
-  status?: string;
-}
+import type { Program } from '@/lib/programs-data';
 
 export default function ProgramList() {
   const [programs, setPrograms] = useState<Program[]>([]);

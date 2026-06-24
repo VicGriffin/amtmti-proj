@@ -42,10 +42,10 @@ export function EnrollmentStep3({
   loadingCourses,
   lockedProgram = false,
 }: EnrollmentStep3Props) {
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | null) => {
     onDataChange({
       ...data,
-      [field]: value,
+      [field]: value ?? '',
     })
   }
 
