@@ -29,39 +29,34 @@ export default function AdminPage() {
         fetch('/api/admin/membership/list'),
       ])
 
-      // Temporary variables to hold the raw API arrays for logging later
-      let enrollmentsData: any[] | undefined
-      let messagesData: any[] | undefined
-      let applicationsData: any[] | undefined
+      let enrollmentsCount = 0
+      let messagesCount = 0
+      let applicationsCount = 0
 
+      // Enrollments API returns array directly
       if (enrollmentsRes.ok) {
         const enrollments = await enrollmentsRes.json()
-        console.log('Enrollments API response:', enrollments)
-        enrollmentsData = enrollments
-        console.log('Enrollments count:', enrollments.length)
-        setStats((s) => ({ ...s, enrollments: enrollments.length }))
-      }
-      if (messagesRes.ok) {
-        const messages = await messagesRes.json()
-        console.log('Messages API response:', messages)
-        messagesData = messages
-        console.log('Messages count:', messages.length)
-        setStats((s) => ({ ...s, messages: messages.length }))
-      }
-      if (applicationsRes.ok) {
-        const applications = await applicationsRes.json()
-        console.log('Membership API response:', applications)
-        applicationsData = applications
-        console.log('Memberships count:', applications.length)
-        setStats((s) => ({ ...s, applications: applications.length }))
+        enrollmentsCount = Array.isArray(enrollments) ? enrollments.length : 0
+        setStats((s) => ({ ...s, enrollments: enrollmentsCount }))
+      } else if (enrollmentsRes.status === 401) {
+        router.push('/admin/login')
       }
 
-      // Log the aggregate values that were just set
-      console.log('Stats being set:', {
-        enrollments: enrollmentsData?.length ?? 0,
-        messages: messagesData?.length ?? 0,
-        applications: applicationsData?.length ?? 0,
-      })
+      // Messages API returns array directly
+      if (messagesRes.ok) {
+        const messages = await messagesRes.json()
+        messagesCount = Array.isArray(messages) ? messages.length : 0
+        setStats((s) => ({ ...s, messages: messagesCount }))
+      }
+
+      // Memberships API returns { data, total }
+      if (applicationsRes.ok) {
+        const response = await applicationsRes.json()
+        applicationsCount = response.data?.length || response.total || 0
+        setStats((s) => ({ ...s, applications: applicationsCount }))
+      } else if (applicationsRes.status === 401) {
+        router.push('/admin/login')
+      }
     } catch (error) {
       console.error('Error loading stats:', error)
     } finally {
