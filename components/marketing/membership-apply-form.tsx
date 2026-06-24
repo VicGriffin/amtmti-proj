@@ -79,7 +79,7 @@ export function MembershipApplyForm() {
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="ma-tier">Membership tier</Label>
-        <Select value={tier} onValueChange={(value) => setTier(value)}>
+        <Select value={tier ?? ""} onValueChange={(value) => setTier(value)}>
           <SelectTrigger id="ma-tier">
             <SelectValue placeholder="Select a tier" />
           </SelectTrigger>

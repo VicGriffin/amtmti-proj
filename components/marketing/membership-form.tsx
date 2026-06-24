@@ -141,7 +141,7 @@ export function MembershipForm() {
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <Label htmlFor="country">Country *</Label>
-          <Select value={formData.country} onValueChange={(value) => handleChange('country', value)}>
+          <Select value={formData.country} onValueChange={(value) => handleChange('country', value ?? '')}>
             <SelectTrigger id="country" className="mt-1.5">
               <SelectValue />
             </SelectTrigger>
@@ -156,7 +156,7 @@ export function MembershipForm() {
         </div>
         <div>
           <Label htmlFor="profession">Profession *</Label>
-          <Select value={formData.profession} onValueChange={(value) => handleChange('profession', value)}>
+          <Select value={formData.profession} onValueChange={(value) => handleChange('profession', value ?? '')}>
             <SelectTrigger id="profession" className="mt-1.5">
               <SelectValue placeholder="Select profession" />
             </SelectTrigger>
