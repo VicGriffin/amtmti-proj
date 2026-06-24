@@ -78,22 +78,18 @@ const nextConfig = {
     NEXT_PUBLIC_SITE_NAME: 'AMTMTI',
   },
 
-  // Webpack configuration
-  webpack: (config) => {
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      fs: false,
-      path: false,
-      os: false,
-    }
-    return config
-  },
-
   // Compression and optimization
   compress: true,
   
   // Production optimizations
   productionBrowserSourceMaps: false,
+
+  // Turbopack configuration for Next.js 16
+  experimental: {
+    turbopack: {
+      resolveExtensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+    },
+  },
 }
 
 module.exports = nextConfig
